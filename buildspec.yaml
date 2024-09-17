@@ -3,20 +3,27 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Ensuring correct Java version..."
-      - java -version  # Verify Java installation
-      - echo "Ensuring correct Maven version..."
+      - echo "Installing dependencies..."
+      - yum update -y  # Ensure the system is up-to-date
+      - yum install -y java-21-amazon-corretto-devel  # Install Java 21
+      - export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
+      - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Java version:"
+      - java -version  # Verify Java version
+      - echo "Installing Maven 3.x..."
+      - yum install -y maven  # Install Maven 3.x
+      - echo "Maven version:"
       - mvn -version  # Verify Maven installation
 
   pre_build:
     commands:
       - echo "Running pre-build commands..."
-      - mvn clean || { echo 'mvn clean failed'; exit 1; }
+      - mvn clean || { echo 'mvn clean failed'; exit 1; }  # Clean the project
 
   build:
     commands:
       - echo "Building the project with Maven..."
-      - mvn package -DskipTests || { echo 'mvn package failed'; exit 1; }
+      - mvn package -DskipTests || { echo 'mvn package failed'; exit 1; }  # Build the project
 
   post_build:
     commands:
@@ -26,7 +33,7 @@ phases:
 
 artifacts:
   files:
-    - target/deploy/**
+    - target/deploy/**  # Include the compiled jar in the artifacts
   discard-paths: yes
 
 cache:
