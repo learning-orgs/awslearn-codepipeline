@@ -6,19 +6,17 @@ phases:
       - echo "Updating the system..."
       - yum update -y  # Update system packages
 
-      - echo "Installing Java 17..."
+      - echo "Ensuring Java 17 is installed..."
       - yum install -y java-17-amazon-corretto-devel  # Install Java 17
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Java version:"
       - java -version  # Verify Java version
 
-      - echo "Installing Maven 3.x..."
-      - yum install -y maven  # Install Maven 3.x using the standard Amazon Linux package
-      - export M2_HOME=/usr/share/maven
-      - export PATH=$M2_HOME/bin:$PATH
+      - echo "Checking for pre-installed Maven..."
+      - if ! command -v mvn &> /dev/null; then echo 'Maven not found, failing build'; exit 1; fi
       - echo "Maven version:"
-      - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
+      - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Verify pre-installed Maven
 
   pre_build:
     commands:
