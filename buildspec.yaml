@@ -3,20 +3,29 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Updating the system manoj1..."
+      - echo "Updating the system..."
       - yum update -y  # Update system packages
 
       - echo "Ensuring Java 17 is installed..."
-      - yum install -y java-17-amazon-corretto-devel  # Java 17 should be installed
+      - yum install -y java-17-amazon-corretto-devel  # Install Java 17
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Java installation directory:"
+      - ls -l /usr/lib/jvm/  # List Java installation directories
       - echo "Java version:"
       - java -version  # Verify Java version
 
-      - echo "Checking for pre-installed Maven..."
-      - if ! command -v mvn &> /dev/null; then echo 'Maven not found, attempting to install...'; yum install -y maven; fi
+      - echo "Checking for Maven installation..."
+      - if ! command -v mvn &> /dev/null; then
+        echo 'Maven not found, installing...';
+        yum install -y maven;
+        else
+        echo 'Maven found, updating PATH...';
+        fi
       - export M2_HOME=/usr/share/maven
       - export PATH=$M2_HOME/bin:$PATH
+      - echo "Maven installation directory:"
+      - ls -l /usr/share/maven  # List Maven installation directory
       - echo "Maven version:"
       - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
 
@@ -25,6 +34,8 @@ phases:
       - echo "Setting JAVA_HOME and PATH for pre-build phase..."
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Environment variables:"
+      - env  # Print environment variables for debugging
       - echo "Running pre-build commands..."
       - mvn clean || { echo 'mvn clean failed'; exit 1; }  # Clean the project
 
@@ -33,6 +44,8 @@ phases:
       - echo "Setting JAVA_HOME and PATH for build phase..."
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Environment variables:"
+      - env  # Print environment variables for debugging
       - echo "Building the project with Maven..."
       - mvn package -DskipTests || { echo 'mvn package failed'; exit 1; }  # Build the project
 
