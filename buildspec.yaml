@@ -5,7 +5,7 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - yum update -y  # Ensure the system is up-to-date
-      - yum install -y java-21-amazon-corretto-devel  # Install Java 21
+      - yum install -y java-17-openjdk-devel  # Install Java 21
       - export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Java version:"
