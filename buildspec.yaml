@@ -13,12 +13,17 @@ phases:
       - echo "Java version:"
       - java -version  # Verify Java version
 
-      - echo "Installing Maven manually..."
-      - curl -O https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
-      - tar -xzf apache-maven-3.8.4-bin.tar.gz
+      - echo "Downloading and installing Maven..."
+      - curl -O https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+      - echo "Verifying Maven download..."
+      - ls -l apache-maven-3.8.4-bin.tar.gz
+      - file apache-maven-3.8.4-bin.tar.gz  # Check the file type
+      - tar -xzf apache-maven-3.8.4-bin.tar.gz || { echo 'Failed to extract Maven tar.gz'; exit 1; }
       - mv apache-maven-3.8.4 /usr/local/apache-maven
       - export M2_HOME=/usr/local/apache-maven
       - export PATH=$M2_HOME/bin:$PATH
+      - echo "Maven installation directory:"
+      - ls -l /usr/local/apache-maven
       - echo "Maven version:"
       - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
 
