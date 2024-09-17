@@ -10,25 +10,29 @@ phases:
       - yum install -y java-17-amazon-corretto-devel  # Install Java 17
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
-      - echo "Setting JAVA_HOME environment variable..."
-      - echo "export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto" >> ~/.bashrc
-      - echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> ~/.bashrc
-      - source ~/.bashrc  # Reload bashrc to apply changes
       - echo "Java version:"
       - java -version  # Verify Java version
 
       - echo "Installing Maven 3.x..."
       - yum install -y maven  # Install Maven 3.x using the standard Amazon Linux package
+      - export M2_HOME=/usr/share/maven
+      - export PATH=$M2_HOME/bin:$PATH
       - echo "Maven version:"
       - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
 
   pre_build:
     commands:
+      - echo "Setting JAVA_HOME and PATH for pre-build phase..."
+      - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+      - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Running pre-build commands..."
       - mvn clean || { echo 'mvn clean failed'; exit 1; }  # Clean the project
 
   build:
     commands:
+      - echo "Setting JAVA_HOME and PATH for build phase..."
+      - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+      - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Building the project with Maven..."
       - mvn package -DskipTests || { echo 'mvn package failed'; exit 1; }  # Build the project
 
