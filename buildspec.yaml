@@ -13,7 +13,7 @@ phases:
       - echo "Java version:"
       - java -version  # Verify Java version
 
-      - echo "Downloading and installing Maven..."
+      - echo "Downloading Maven..."
       - curl -O https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
       - echo "Verifying Maven download..."
       - ls -l apache-maven-3.8.4-bin.tar.gz
@@ -32,7 +32,7 @@ phases:
       - echo "Setting JAVA_HOME and PATH for pre-build phase..."
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
-      - echo "Environment variables:"
+      - echo "Current environment variables:"
       - env  # Print environment variables for debugging
       - echo "Running pre-build commands..."
       - mvn clean || { echo 'mvn clean failed'; exit 1; }  # Clean the project
@@ -42,7 +42,7 @@ phases:
       - echo "Setting JAVA_HOME and PATH for build phase..."
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
-      - echo "Environment variables:"
+      - echo "Current environment variables:"
       - env  # Print environment variables for debugging
       - echo "Building the project with Maven..."
       - mvn package -DskipTests || { echo 'mvn package failed'; exit 1; }  # Build the project
