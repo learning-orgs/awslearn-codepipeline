@@ -3,20 +3,22 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Updating the system..."
+      - echo "Updating the system manoj1..."
       - yum update -y  # Update system packages
 
       - echo "Ensuring Java 17 is installed..."
-      - yum install -y java-17-amazon-corretto-devel  # Install Java 17
+      - yum install -y java-17-amazon-corretto-devel  # Java 17 should be installed
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Java version:"
       - java -version  # Verify Java version
 
       - echo "Checking for pre-installed Maven..."
-      - if ! command -v mvn &> /dev/null; then echo 'Maven not found, failing build'; exit 1; fi
+      - if ! command -v mvn &> /dev/null; then echo 'Maven not found, attempting to install...'; yum install -y maven; fi
+      - export M2_HOME=/usr/share/maven
+      - export PATH=$M2_HOME/bin:$PATH
       - echo "Maven version:"
-      - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Verify pre-installed Maven
+      - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
 
   pre_build:
     commands:
