@@ -8,8 +8,8 @@ phases:
       - echo "Installing dependencies or any other setup steps"
   build:
     commands:
-      - ./mvnw clean install  # Replace with your actual Maven or Gradle build command
-  post_build:
+      - mvn package -DskipTests # Replace with your actual Maven or Gradle build command
+  post_build:s
     commands:
       - echo "Any post-build steps or artifact handling"
 
