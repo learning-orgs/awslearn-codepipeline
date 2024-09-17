@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing Java 21..."
+      - yum install -y java-21-amazon-corretto-devel  # Install Java 21
+      - export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
+      - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Installing Maven..."
+      - yum install -y maven  # Install Maven
+
+  pre_build:
+    commands:
+      - echo "Running pre-build commands..."
+      - mvn clean
+
+  build:
+    commands:
+      - echo "Building the project with Maven..."
+      - mvn package -DskipTests
+
+  post_build:
+    commands:
+      - echo "Build completed. Preparing artifacts..."
+      - mkdir -p target/deploy
+      - cp target/*.jar target/deploy/
+
+artifacts:
+  files:
+    - target/deploy/**  # Include the compiled jar in the artifacts
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.m2/**/*'  # Cache Maven dependencies
