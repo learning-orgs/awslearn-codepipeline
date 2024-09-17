@@ -9,7 +9,7 @@ phases:
   build:
     commands:
       - mvn package -DskipTests # Replace with your actual Maven or Gradle build command
-  post_build:s
+  post_build:
     commands:
       - echo "Any post-build steps or artifact handling"
 
