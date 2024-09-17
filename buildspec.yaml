@@ -7,9 +7,13 @@ phases:
       - yum update -y  # Update system packages
 
       - echo "Installing Java 17..."
-      - yum install -y java-17-amazon-corretto-devel  # Install Java 17 (corrected version)
+      - yum install -y java-17-amazon-corretto-devel  # Install Java 17
       - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "Setting JAVA_HOME environment variable..."
+      - echo "export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto" >> ~/.bashrc
+      - echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> ~/.bashrc
+      - source ~/.bashrc  # Reload bashrc to apply changes
       - echo "Java version:"
       - java -version  # Verify Java version
 
