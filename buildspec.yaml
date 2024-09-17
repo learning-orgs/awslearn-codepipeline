@@ -3,17 +3,20 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Installing dependencies..."
-      - yum update -y  # Ensure the system is up-to-date
-      - yum install -y java-17-openjdk-devel  # Install Java 21
-      - export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
+      - echo "Updating the system..."
+      - yum update -y  # Update system packages
+
+      - echo "Installing Java 17..."
+      - yum install -y java-17-amazon-corretto-devel  # Install Java 17 (corrected version)
+      - export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "Java version:"
       - java -version  # Verify Java version
+
       - echo "Installing Maven 3.x..."
-      - yum install -y maven  # Install Maven 3.x
+      - yum install -y maven  # Install Maven 3.x using the standard Amazon Linux package
       - echo "Maven version:"
-      - mvn -version  # Verify Maven installation
+      - mvn -version || { echo 'mvn installation failed'; exit 1; }  # Validate Maven installation
 
   pre_build:
     commands:
