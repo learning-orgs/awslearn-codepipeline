@@ -1,0 +1,51 @@
+version: 0.0
+os: linux
+files:
+  - source: /target/awslearn-codepipeline.jar
+    destination: /home/ec2-user/awslearn-codepipeline
+
+permissions:
+  - object: /home/ec2-user/awslearn-codepipeline
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+    mode: 755
+    type:
+      - file
+
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: ec2-user
+
+  AfterInstall:
+    - location: scripts/start_application.sh
+      timeout: 300
+      runas: ec2-user
+
+  ApplicationStart:
+    - location: scripts/validate_service.sh
+      timeout: 300
+      runas: ec2-user
+
+  BeforeAllowTraffic:
+    - location: scripts/health_check.sh
+      timeout: 300
+      runas: ec2-user
+
+  AfterAllowTraffic:
+    - location: scripts/after_traffic.sh
+      timeout: 300
+      runas: ec2-user
+
+  ApplicationStop:
+    - location: scripts/stop_application.sh
+      timeout: 300
+      runas: ec2-user
+
+loadBalancers:
+  - targetGroupInfoList:
+      - name: your-target-group-name
+
+deploymentOption: WITH_TRAFFIC_CONTROL
