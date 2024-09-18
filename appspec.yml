@@ -19,6 +19,11 @@ hooks:
       timeout: 300
       runas: ec2-user
 
+  ApplicationStop:
+    - location: scripts/stop_application.sh
+      timeout: 300
+      runas: ec2-user
+
   AfterInstall:
     - location: scripts/start_application.sh
       timeout: 300
@@ -28,24 +33,5 @@ hooks:
     - location: scripts/validate_service.sh
       timeout: 300
       runas: ec2-user
-
-  BeforeAllowTraffic:
-    - location: scripts/health_check.sh
-      timeout: 300
-      runas: ec2-user
-
-  AfterAllowTraffic:
-    - location: scripts/after_traffic.sh
-      timeout: 300
-      runas: ec2-user
-
-  ApplicationStop:
-    - location: scripts/stop_application.sh
-      timeout: 300
-      runas: ec2-user
-
-loadBalancers:
-  - targetGroupInfoList:
-      - name: your-target-group-name
 
 deploymentOption: WITH_TRAFFIC_CONTROL

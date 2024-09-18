@@ -6,19 +6,21 @@ phases:
       java: corretto17  # Java 17 (Amazon Corretto)
     commands:
       - echo "Installing dependencies or any other setup steps"
+      - mvn install -DskipTests  # Install dependencies (optional step)
+
   build:
     commands:
-      - mvn package -DskipTests # Replace with your actual Maven or Gradle build command
+      - mvn package -DskipTests  # Replace with your actual Maven or Gradle build command
+
   post_build:
     commands:
       - echo "Build completed. Preparing artifacts..."
       - mkdir -p target/deploy
       - cp target/*.jar target/deploy/
 
-
 artifacts:
   files:
-    - target/deploy/**  # Include the compiled jar in the artifacts
+    - target/deploy/**  # Include the compiled JAR in the artifacts
   discard-paths: yes
 
 cache:
