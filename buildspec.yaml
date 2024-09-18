@@ -11,8 +11,16 @@ phases:
       - mvn package -DskipTests # Replace with your actual Maven or Gradle build command
   post_build:
     commands:
-      - echo "Any post-build steps or artifact handling"
+      - echo "Build completed. Preparing artifacts..."
+      - mkdir -p target/deploy
+      - cp target/*.jar target/deploy/
+
 
 artifacts:
   files:
-    - target/my-spring-boot-app.jar  # Adjust the path to your built JAR file
+    - target/deploy/**  # Include the compiled jar in the artifacts
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.m2/**/*'  # Cache Maven dependencies
