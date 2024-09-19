@@ -30,15 +30,9 @@ phases:
 
 artifacts:
   files:
-    - target/deploy/**
-  base-directory: target/deploy
+    - '**/*'  # Adjusted to capture all files, ensure it’s a list (proper indentation)
+  base-directory: target/deploy  # Added the base directory for artifacts
   discard-paths: yes
-  secondary-artifacts:
-    files:
-      - '**/*'
-    name: "awslearn-codepipeline-build-${CODEBUILD_BUILD_NUMBER}.jar"  # Use CodeBuild build number for artifact name
-    discard-paths: yes
-    s3-bucket: $S3_BUCKET_NAME  # Upload artifacts to S3 bucket
 
 cache:
   paths:
