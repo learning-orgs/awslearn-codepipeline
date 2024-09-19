@@ -10,13 +10,13 @@ phases:
       - echo Logging in to Docker Hub...
       - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
       - echo Fetching the current build number from S3...
-      - aws s3 cp s3://your-bucket-name/build_number.txt build_number.txt
+      - aws s3 cp s3://awlearns3bucket/build_number.txt build_number.txt
       - BUILD_NUMBER=$(cat build_number.txt)
       - echo "Current build number is $BUILD_NUMBER"
       - NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
       - echo "New build number is $NEW_BUILD_NUMBER"
       - echo $NEW_BUILD_NUMBER > build_number.txt
-      - aws s3 cp build_number.txt s3://your-bucket-name/build_number.txt
+      - aws s3 cp build_number.txt s3://awlearns3bucket/build_number.txt
       - IMAGE_TAG=1.0.$NEW_BUILD_NUMBER   # Format the image tag as 1.0.X
   build:
     commands:
