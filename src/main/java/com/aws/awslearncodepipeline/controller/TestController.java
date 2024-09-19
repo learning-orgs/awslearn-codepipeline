@@ -20,4 +20,8 @@ public class TestController {
     public String hello2() {
         return "hello2";
     }
+    @GetMapping("/v3")
+    public String hello3() {
+        return "hello3";
+    }
 }
