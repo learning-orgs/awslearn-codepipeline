@@ -7,39 +7,25 @@ phases:
       - aws --version
       - REPOSITORY_URI=583959061299.dkr.ecr.ap-south-1.amazonaws.com/awslearnecr
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - echo Logging in to Docker Hub...
-      - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-      - echo Fetching the current build number from S3...
-      - aws s3 cp s3://awlearns3bucket/build_number.txt build_number.txt
-      - BUILD_NUMBER=$(cat build_number.txt)
-      - echo "Current build number is $BUILD_NUMBER"
-      - NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-      - echo "New build number is $NEW_BUILD_NUMBER"
-      - echo $NEW_BUILD_NUMBER > build_number.txt
-      - aws s3 cp build_number.txt s3://awlearns3bucket/build_number.txt
-      - IMAGE_TAG=1.0.$NEW_BUILD_NUMBER   # Format the image tag as 1.0.X
+      - echo Running Maven build...
+      - mvn clean install   # Ensure the JAR is built
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"awslearn-codepipeline","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - DOCKER_CONTAINER_NAME=awslearnecr
-      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json
+      - printf '[{"name":"awslearn-codepipeline","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
 
 artifacts:
   files:
     - imagedefinitions.json
-    - target/awslearn-codepipeline.jar
+    - target/awslearn-codepipeline.jar  # Ensure this path matches the actual JAR file location
 
 env:
   variables:
