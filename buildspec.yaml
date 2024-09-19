@@ -7,6 +7,7 @@ env:
     AWS_REGION: $AWS_REGION  # Fetched from GitHub Secrets or environment variable
     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID  # Fetched from GitHub Secrets
     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY  # Fetched from GitHub Secrets
+    ECR_REPOSITORY: $ECR_REPOSITORY  # ECR repository name fetched from GitHub Secrets
 
 phases:
   install:
@@ -15,14 +16,20 @@ phases:
     commands:
       - echo "Setting up environment and installing dependencies"
       - mvn install -DskipTests  # Install dependencies
+      - echo "Logging in to Amazon ECR"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
 
   build:
     commands:
-      - echo "Running Maven package"
-      - mvn package -DskipTests  # Build the Spring Boot app
+      - echo "Building Docker image"
+      - docker build -t $ECR_REPOSITORY:latest .
+      - echo "Tagging Docker image"
+      - docker tag $ECR_REPOSITORY:latest $ECR_REPOSITORY:latest
 
   post_build:
     commands:
+      - echo "Pushing Docker image to Amazon ECR"
+      - docker push $ECR_REPOSITORY:latest
       - echo "Build completed. Preparing artifacts for deployment."
       - mkdir -p target/deploy
       - cp target/*.jar target/deploy/
@@ -30,8 +37,8 @@ phases:
 
 artifacts:
   files:
-    - '**/*'  # Adjusted to capture all files, ensure it’s a list (proper indentation)
-  base-directory: target/deploy  # Added the base directory for artifacts
+    - target/deploy/**
+  base-directory: target/deploy
   discard-paths: yes
 
 cache:
