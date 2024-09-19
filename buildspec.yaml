@@ -8,6 +8,10 @@ phases:
       - aws --version
       - REPOSITORY_URI=583959061299.dkr.ecr.ap-south-1.amazonaws.com/awslearnecr
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo Retrieving Docker Hub credentials from Secrets Manager...
+      - DOCKERHUB_CREDENTIALS=$(aws secretsmanager get-secret-value --secret-id codepipeline --query 'SecretString' --output text)
+      - DOCKERHUB_USERNAME=$(echo $DOCKERHUB_CREDENTIALS | jq -r '.DOCKERHUB_USERNAME')
+      - DOCKERHUB_PASSWORD=$(echo $DOCKERHUB_CREDENTIALS | jq -r '.DOCKERHUB_PASSWORD')
       - echo Logging in to Docker Hub...
       - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -26,19 +30,11 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"awslearn-codepipeline","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - echo Writing image definitions file...
       - DOCKER_CONTAINER_NAME=awslearnecr
       - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - echo $DOCKER_CONTAINER_NAME
-      - echo printing imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
   files:
     - imagedefinitions.json
     - target/awslearn-codepipeline.jar
-
-env:
-  variables:
-    DOCKERHUB_USERNAME: mnojpatidar111
-    DOCKERHUB_PASSWORD: Mylove143#
