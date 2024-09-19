@@ -1,27 +1,44 @@
 version: 0.2
 
+env:
+  variables:
+    S3_BUCKET_NAME: $S3_BUCKET_NAME  # Fetched from GitHub Secrets or environment variable
+    CODEBUILD_NAME: $CODEBUILD_NAME  # Fetched from GitHub Secrets or environment variable
+    AWS_REGION: $AWS_REGION  # Fetched from GitHub Secrets or environment variable
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID  # Fetched from GitHub Secrets
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY  # Fetched from GitHub Secrets
+
 phases:
   install:
     runtime-versions:
-      java: corretto17  # Java 17 (Amazon Corretto)
+      java: corretto17  # Java 17 using Amazon Corretto
     commands:
-      - echo "Installing dependencies or any other setup steps"
-      - mvn install -DskipTests  # Install dependencies (optional step)
+      - echo "Setting up environment and installing dependencies"
+      - mvn install -DskipTests  # Install dependencies
 
   build:
     commands:
-      - mvn package -DskipTests  # Replace with your actual Maven or Gradle build command
+      - echo "Running Maven package"
+      - mvn package -DskipTests  # Build the Spring Boot app
 
   post_build:
     commands:
-      - echo "Build completed. Preparing artifacts..."
+      - echo "Build completed. Preparing artifacts for deployment."
       - mkdir -p target/deploy
       - cp target/*.jar target/deploy/
+      - echo "Artifacts ready in target/deploy"
 
 artifacts:
   files:
-    - target/deploy/**  # Include the compiled JAR in the artifacts
+    - target/deploy/**
+  base-directory: target/deploy
   discard-paths: yes
+  secondary-artifacts:
+    files:
+      - '**/*'
+    name: "awslearn-codepipeline-build-${CODEBUILD_BUILD_NUMBER}.jar"  # Use CodeBuild build number for artifact name
+    discard-paths: yes
+    s3-bucket: $S3_BUCKET_NAME  # Upload artifacts to S3 bucket
 
 cache:
   paths:
