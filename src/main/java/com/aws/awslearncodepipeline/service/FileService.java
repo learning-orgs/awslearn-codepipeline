@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -38,9 +39,9 @@ public class FileService implements UserRepository {
                 String username = row.getCell(1).getStringCellValue();
                 String password = row.getCell(2).getStringCellValue();
                 String role = row.getCell(3).getStringCellValue();
-
+                List<String> roles = Arrays.asList(role.split(","));
                 // users.add(new Users(id, username, password, role));
-                users.add(new Users(id, username, password));
+                users.add(new Users(id, username, password, roles));
 
             }
         }
@@ -61,7 +62,7 @@ public class FileService implements UserRepository {
             newRow.createCell(0).setCellValue(user.getId());
             newRow.createCell(1).setCellValue(user.getUsername());
             newRow.createCell(2).setCellValue(user.getPassword());
-            // newRow.createCell(3).setCellValue(user.getRole());
+            newRow.createCell(3).setCellValue("Default");
 
             workbook.write(fos);
         }
@@ -120,9 +121,9 @@ public class FileService implements UserRepository {
                 if (row.getCell(1).getStringCellValue().equals(username)) {
                     int id = (int) row.getCell(0).getNumericCellValue();
                     String password = row.getCell(2).getStringCellValue();
-                    //String role = row.getCell(3).getStringCellValue();
-                    // return new Users(id, username, password, role);
-                    return new Users(id, username, password);
+                    String role = row.getCell(3).getStringCellValue();
+                    List<String> roles = Arrays.asList(role.split(","));
+                    return new Users(id, username, password, roles);
                 }
             }
         }
