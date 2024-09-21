@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
  * It includes methods for rendering the public page, sign-up, and forgot password pages.
  */
 @Controller
-public class PublicController {
+public class AppController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PublicController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
     /**
      * Displays the public landing page with links to login, sign-up, and forgot password.
